@@ -1,0 +1,5 @@
+generate main sequence lum and temp
+calc class 'G5.7V"
+chance to apply 'aging'
+aging = - temp * luminosity
+
