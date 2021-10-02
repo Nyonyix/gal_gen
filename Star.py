@@ -15,7 +15,7 @@ class Star:
         self.__class = self.GenerateClass() 
         self.__scaler = self.GenerateScaler()
         self.__luminosity = 1.0
-        self.__mass = 1.0
+        self.__mass = self.GenerateMass()
         self.__radius = 1.0
 
     def GetTemperature(self) -> float:
@@ -101,10 +101,17 @@ class Star:
 
         for i in range(10):
             if self.__temperature < inc_count:
-                return count
+                return -abs(count) + 9
             else:
                 inc_count += increment
                 count += 1
+
+    def GenerateMass(self) -> float:
+        '''
+        '''
+        mass_range = self.__def_dict["classes"][self.__class]["mass"]
+        increment = (mass_range[1] - mass_range[0]) / 10
+        return (mass_range[1] - (increment * self.__scaler)) * self.s_mass
 
     def GenerateLuminosity(self) -> float:
         '''
