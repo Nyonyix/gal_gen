@@ -12,7 +12,8 @@ class Star:
         self.__def_file = def_file
         self.__def_dict = self.LoadDefDict()
         self.__temperature = self.GenerateTemperature()
-        self.__class, self.__scaler = self.GenerateClass()
+        self.__class = self.GenerateClass() 
+        self.__scaler = self.GenerateScaler()
         self.__luminosity = 1.0
         self.__mass = 1.0
         self.__radius = 1.0
@@ -85,13 +86,25 @@ class Star:
             else:
                 counter += 1
         star_class = class_letter_list[counter]
-        star_class_number = (class_temp_list[counter][0] + class_temp_list[counter][1]) / self.__temperature
 
-        print(class_temp_list)
-        print(class_letter_list)
-        print(counter)
+        return star_class
 
-        return (star_class, star_class_number)
+    def GenerateScaler(self) -> float:
+        '''
+        Determin the subclass of the star.
+        Returns float.
+        '''
+        temp_range = self.__def_dict["classes"][self.__class]["temp"]
+        increment = (temp_range[1] - temp_range[0]) / 10
+        inc_count = temp_range[0] + increment
+        count = 0
+
+        for i in range(10):
+            if self.__temperature < inc_count:
+                return count
+            else:
+                inc_count += increment
+                count += 1
 
     def GenerateLuminosity(self) -> float:
         '''

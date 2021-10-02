@@ -1,5 +1,5 @@
 from Star import Star
 
-s = Star()
-
-print(f"{s.GetTemperature()}, {s.GetClass()}{s.GetScaler()}")
+for i in range(200):
+    s = Star()
+    print(f"{s.GetTemperature()}, {s.GetClass()}{s.GetScaler()}")
