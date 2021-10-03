@@ -1,5 +1,6 @@
 import json
 import random
+from warnings import resetwarnings
 class Star:
 
     #Solar Constants
@@ -7,12 +8,13 @@ class Star:
     s_radius = 6.957E8
     s_luminosity = 3.828E26
     s_temperature = 5778
-    
+
     def __init__(self, def_file: str = "def.json") -> None:
         self.__def_file = def_file
         self.__def_dict = self.LoadDefDict()
+        self.__spec_class = self.GenerateClass()
+        print(self.__spec_class)
         self.__temperature = self.GenerateTemperature()
-        self.__class = self.GenerateClass() 
         self.__scaler = self.GenerateScaler()
         self.__luminosity = 1.0
         self.__mass = self.GenerateMass()
@@ -22,8 +24,8 @@ class Star:
         return self.__temperature
 
     def GetClass(self) -> str:
-        return self.__class
-    
+        return self.__spec_class
+
     def GetScaler(self) -> float:
         return self.__scaler
 
@@ -47,7 +49,7 @@ class Star:
             print(f"Def File ({self.__def_file}) Not found")
             return {}
             #TODO: Create propper exception handling
-        
+
         return json.load(f)["def"]["star"]
 
     def GenValueList(self, value: str) -> tuple:
@@ -62,63 +64,65 @@ class Star:
             frac_list.append(v["frac"])
         return (tmp_lst, frac_list)
 
+    def GenerateClass(self):
+        class_list = list(self.__def_dict["classes"].keys())
+        weights = []
+        for s in class_list:
+            weights.append(self.__def_dict["classes"][s]["frac"])
+
+        return random.choices(class_list, weights=weights, k=1)[0]
+
     def GenerateTemperature(self) -> int:
         '''
         Generates temperature based on percentage fraction and temps defined in def_file.
         Returns int.
         '''
-        class_list, frac_list = self.GenValueList("temp")
-        temp_range = random.choices(class_list, weights=frac_list, k=1)[0]
-
+        temp_range = self.__def_dict["classes"][self.__spec_class]["temp"]
         return random.randint(temp_range[0], temp_range[1])
-
-    def GenerateClass(self) -> tuple:
-        '''
-        Generates or finds the spectral class of the star.
-        Returns tuple(str, float)
-        '''
-        class_temp_list, a = self.GenValueList("temp")
-        class_letter_list = list(self.__def_dict["classes"])
-        counter = 0
-        for l in class_temp_list:
-            if self.__temperature < l[1]:
-                break
-            else:
-                counter += 1
-        star_class = class_letter_list[counter]
-
-        return star_class
 
     def GenerateScaler(self) -> float:
         '''
         Determin the subclass of the star.
         Returns float.
         '''
-        temp_range = self.__def_dict["classes"][self.__class]["temp"]
+        temp_range = self.__def_dict["classes"][self.__spec_class]["temp"]
         increment = (temp_range[1] - temp_range[0]) / 10
-        inc_count = temp_range[0] + increment
         count = 0
-
-        for i in range(10):
-            if self.__temperature < inc_count:
-                return -abs(count) + 9
+        inc_count =  temp_range[1]
+        half_inc = increment / 2
+        
+        for i in range(11):
+            if inc_count - half_inc <= self.__temperature <= inc_count + half_inc:
+                return count
+            elif count == 9:
+                return count
             else:
-                inc_count += increment
+                inc_count -= increment
                 count += 1
 
     def GenerateMass(self) -> float:
         '''
         '''
-        mass_range = self.__def_dict["classes"][self.__class]["mass"]
+        mass_range = self.__def_dict["classes"][self.__spec_class]["mass"]
         increment = (mass_range[1] - mass_range[0]) / 10
-        return (mass_range[1] - (increment * self.__scaler)) * self.s_mass
+        class_mass_value = mass_range[0] + (increment * self.__scaler)
+        class_mass_range = [class_mass_value - increment / 2, class_mass_value + increment / 2]
+
+        mass = random.uniform(class_mass_range[0], class_mass_range[1])
+
+        if mass_range[0] >= mass:
+            mass = mass_range[0]
+        if mass_range[1] <= mass:
+            mass = mass_range[1]
+
+        return mass * self.s_mass
 
     def GenerateLuminosity(self) -> float:
         '''
         Generates luminosity based on percentage fraction and temps defined in def_file.
         Returns float.
         '''
-        pass
+        return 1.0
 
 if(__name__ == "__main__"):
     print("This is a class lib file")
