@@ -1,6 +1,5 @@
 import json
 import random
-from warnings import resetwarnings
 class Star:
 
     #Solar Constants
@@ -87,11 +86,10 @@ class Star:
         '''
         temp_range = self.__def_dict["classes"][self.__spec_class]["temp"]
         increment = (temp_range[1] - temp_range[0]) / 10
-        count = 0
         inc_count =  temp_range[1]
         half_inc = increment / 2
-        
-        for i in range(11):
+
+        for count in range(11):
             if inc_count - half_inc <= self.__temperature <= inc_count + half_inc:
                 return count
             elif count == 9:
@@ -99,13 +97,15 @@ class Star:
             else:
                 inc_count -= increment
                 count += 1
+        #so lsp stops yelling at me
+        return 1.0
 
     def GenerateMass(self) -> float:
         '''
         '''
         mass_range = self.__def_dict["classes"][self.__spec_class]["mass"]
         increment = (mass_range[1] - mass_range[0]) / 10
-        class_mass_value = mass_range[0] + (increment * self.__scaler)
+        class_mass_value = mass_range[1] - (increment * self.__scaler)
         class_mass_range = [class_mass_value - increment / 2, class_mass_value + increment / 2]
 
         mass = random.uniform(class_mass_range[0], class_mass_range[1])
@@ -122,7 +122,7 @@ class Star:
         Generates luminosity based on percentage fraction and temps defined in def_file.
         Returns float.
         '''
-        return 1.0
+        pass
 
 if(__name__ == "__main__"):
     print("This is a class lib file")
