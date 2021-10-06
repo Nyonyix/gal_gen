@@ -12,10 +12,9 @@ class Star:
         self.__def_file = def_file
         self.__def_dict = self.LoadDefDict()
         self.__spec_class = self.GenerateClass()
-        print(self.__spec_class)
         self.__temperature = self.GenerateTemperature()
         self.__scaler = self.GenerateScaler()
-        self.__luminosity = 1.0
+        self.__luminosity = self.GenerateLuminosity()
         self.__mass = self.GenerateMass()
         self.__radius = 1.0
 
@@ -122,7 +121,19 @@ class Star:
         Generates luminosity based on percentage fraction and temps defined in def_file.
         Returns float.
         '''
-        pass
+        lum_range = self.__def_dict["classes"][self.__spec_class]["lum"]
+        increment = (lum_range[1] - lum_range[0]) / 10
+        class_lum_value = lum_range[1] - (increment * self.__scaler)
+        class_lum_range = [class_lum_value - (increment / 2), class_lum_value + (increment / 2)]
+
+        lum = random.uniform(class_lum_range[0], class_lum_range[1])
+
+        if lum_range[0] >= lum:
+            lum = lum_range[0]
+        if lum_range[1] <= lum:
+            lum = lum_range[1]
+
+        return lum * self.s_luminosity
 
 if(__name__ == "__main__"):
     print("This is a class lib file")
