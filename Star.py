@@ -16,6 +16,7 @@ class Star:
         self.__scaler = self.GenerateScaler()
         self.__luminosity = self.GenerateLuminosity()
         self.__mass = self.GenerateMass()
+        self.__age = self.GenerateAge()
         self.__radius = 1.0
 
     def GetTemperature(self) -> float:
@@ -35,6 +36,9 @@ class Star:
 
     def GetRadius(self) -> float:
         return self.__radius
+
+    def GetAge(self):
+        return self.__age
 
     def LoadDefDict(self) -> dict:
         '''
@@ -127,13 +131,16 @@ class Star:
         class_lum_range = [class_lum_value - (increment / 2), class_lum_value + (increment / 2)]
 
         lum = random.uniform(class_lum_range[0], class_lum_range[1])
-
         if lum_range[0] >= lum:
             lum = lum_range[0]
         if lum_range[1] <= lum:
             lum = lum_range[1]
 
         return lum * self.s_luminosity
+
+    def GenerateAge(self) -> float:
+        age_range = self.__def_dict["classes"][self.__spec_class]["age"]
+        return random.uniform(age_range[0], age_range[1])
 
 if(__name__ == "__main__"):
     print("This is a class lib file")
