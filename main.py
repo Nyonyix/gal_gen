@@ -11,7 +11,7 @@ for i in range(1000):
     except(KeyError):
         a[f"{s.GetClass()}{s.GetScaler()}"] = 1
 
-    b = dict(sorted(a.items(), key=lambda item: item[1]))
+    b = dict(sorted(a.items(), key=lambda item: item[1]), reversed=True)
 
 for k, v in b.items():
     print(f"{k}, {v}")
